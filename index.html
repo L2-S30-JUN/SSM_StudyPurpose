@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="dark">
+  <title>Shoichi Simulator</title>
+  <link rel="icon" type="image/png" href="sprite/fav.png">
+
+  <!-- ============================================================
+       스타일 — css/ 로 분리 (2026-10-15). 파일 번호 = 캐스케이드 순서.
+       ============================================================ -->
+  <link rel="stylesheet" href="css/00-base.css">
+  <link rel="stylesheet" href="css/10-update.css">
+  <link rel="stylesheet" href="css/20-credit.css">
+  <link rel="stylesheet" href="css/30-notice.css">
+  <link rel="stylesheet" href="css/40-lobby.css">
+  <link rel="stylesheet" href="css/50-intro.css">
+  <link rel="stylesheet" href="css/60-ranking.css">
+  <link rel="stylesheet" href="css/70-unity3d.css">
+</head>
+
+<body>
+  <!-- 입장 고지 (연구용 고지): 처음 들어올 때 검은 화면에 안내 문구를 띄우고 사라진다. 클릭·키 입력으로 넘길 수 있다. -->
+  <div id="disclaimer-splash" role="dialog" aria-label="안내">
+    <div class="txt">해당 시뮬레이터는 연구용이며, 사용된 모델링은 '실티'님의 쇼이치 시뮬레이터에서 추출한 모델링임을 밝힙니다.<br>해당 모델링의 출처가 불분명하기에 연구용으로만 사용함을 밝힙니다.<br>본 사이트는 일시적으로 호스팅된 후 운영이 중지됩니다.</div>
+    <label class="skip"><input type="checkbox" id="disclaimer-skip"> 안내문구 보지 않기</label>
+  </div>
+  <script>/* '안내문구 보지 않기'를 켠 사람은 그리기 전에 지운다 (55-notices.js 까지 기다리면 한 프레임 번쩍인다) */
+    try { if (localStorage.getItem('shoichiPersonalDisclaimerSkip') === '1') document.getElementById('disclaimer-splash').remove(); } catch (e) { }</script>
+  <!-- 크레딧 (로비 하단 문구 클릭) -->
+  <div id="credit-modal">
+    <div class="box">
+      <img src="sprite/screenshot.png" alt="screenshot">
+      <div class="msg">본 사이트는 님블뉴런 IP에 위배되지 않는 선에서 제작되는 2차 창작 사이트입니다.<br>원작과 다른 점이 있다면 피드백해주세요!</div>
+      <div class="thanks-title">Thanks to.. <span style="color:#999;font-weight:normal;font-size:12px">(테스트 해주신
+          분들)</span></div>
+      <div class="thanks-list">쿠온우횬, 정선우123, 지존똥, 칼챔충, 루미널</div>
+      <button class="close" id="credit-close">닫기</button>
+    </div>
+  </div>
+  <!-- 업데이트 내역 — 내용은 JS의 UPDATE_LOG 배열(또는 Supabase)에서 그려진다 (여기 HTML은 껍데기) -->
+  <div id="update-modal">
+    <div class="box">
+      <div class="ttl">업데이트 내역</div>
+      <div class="list" id="update-list"></div>
+      <button class="close" id="update-close">닫기</button>
+    </div>
+  </div>
+  <!-- 게임 진입 안내 (전체화면 / 엣지 마우스 제스처) -->
+  <div id="notice-modal">
+    <div class="box">
+      <div class="ttl">⚠ 안내</div>
+      <div class="line">화면이 클수록 원작에 가깝게 보입니다.<br><b>F11키</b>를 눌러 전체화면으로 이용해주세요!<br><span class="sub">(3D 화면은 창 크기와
+          무관하게 1920×1080 배율로 고정됩니다)</span></div>
+      <div class="line">Microsoft Edge 브라우저를 사용하신다면<br><b>'마우스 제스처'</b> 기능을 비활성화해주세요.<br><span class="sub">(우클릭 드래그가
+          제스처로 인식되어 탭이 닫힐 수 있습니다)</span></div>
+      <label class="hide-chk"><input type="checkbox" id="notice-hide-chk"> 하루동안 다시 보지 않기</label>
+      <button class="close" id="notice-close">확인</button>
+    </div>
+  </div>
+  <div id="lobby-screen">
+    <div class="inner">
+      <img id="lobby-logo" src="sprite/logo.png" alt="">
+      <div class="ttl">쇼이치 시뮬레이터</div>
+      <div class="sub">이터널리턴 쇼이치 연습 시뮬레이터</div>
+      <button id="lobby-start-btn" title="로컬 서버(node serve.js)로 열어야 동작합니다">게임 시작</button>
+      <!-- 모드 목록. 전부 3D로 재구현돼 있다 (궁 추격 연습은 v2.5 에서 새로 넣은 3D 전용 모드, 2026-10-22). 더미 처치 챌린지는 2026-09-13에 disabled로 잠갔다가
+           2026-09-16에 다시 열었고, 2026-09-20에 다시 disabled로 잠갔다 (열려면 disabled만 떼면 된다). 진입 핸들러는 JS의
+           '3D 챌린지 진입' / '나머지 3D 모드 진입' 블록에 있다.
+           쇼이치 클래식은 2026-09-13부터 로비 모드가 아니라 게임 안 옵션 패널의 설정이다
+           ('게임 시작' → 좌측 패널 '쇼이치 클래식' 섹션).
+           2D 원본 로직·수치는 ShoichiSimulator_v1.7\index.html(동결)에,
+           쇼이치 클래식과 콤보 모달의 원본은 ShoichiSimulator_v1.8\index.html에 있다. -->
+      <div class="modes">
+        <div class="chal-row">
+          <button id="mode-chal-btn" disabled title="준비 중 — 잠시 닫아 두었습니다">더미 처치 챌린지</button>
+          <button id="lobby-rank-btn" title="더미 처치 챌린지 랭킹 보기">랭킹</button>
+        </div>
+        <button id="mode-vquiz-btn" title="궁 단검 4개 사이로 비약을 넣어 2초 안에 3번 맞히세요">V자 각 퀴즈</button>
+        <button id="mode-aim-btn" title="궁 단검 2개에 커서를 얹고 W로 비약, 200회까지 걸린 시간을 재세요 — 가끔 삼각·별 패턴이 섞여 나옵니다">단검 에임 연습</button>
+        <button id="mode-mine-btn" title="광물을 둘러싼 궁 단검 4개를 1→2→3→4 순서로, 1초 안에 전부 비약으로 타세요">광물타기 연습</button>
+        <!-- 2026-11-04 엠마·아야 임시 제외 — 되살리면 title 의 "도주·돌진·점멸로 빠집니다" 를
+             "도주·돌진·점멸로 빠지거나 엠마 E(변이)·아야 R(공포)로 맞받아칩니다" 로 되돌린다 -->
+        <button id="mode-chase-btn" title="개활지는 3·2·1 카운트 뒤, 벽 밀착은 W→R 로 시작 — 상대가 도주·돌진·점멸로 빠집니다. 제한 시간 안에 상대 체력을 다 깎으면 성공입니다">궁 추격 연습</button>
+        <button id="mode-duel-btn" title="같은 킷을 가진 쇼이치 봇과 1 vs 1 — 같은 HP로 시작해 먼저 0이 되는 쪽이 집니다. 시작 전에 레벨·무기 숙련도·장비(보라템/풀템, 나무위키 계수·고유 효과)를 고르면 봇도 같은 능력치로 싸웁니다">쇼이치 봇 1 vs 1</button>
+        <button id="mode-hof-btn" title="지난 시즌 더미 처치 챌린지 TOP 10">명예의 전당</button>
+      </div>
+      <!-- 문구는 UPDATE_LOG의 맨 위 버전에서 자동으로 채워진다 -->
+      <a id="lobby-update-link">업데이트 내역</a>
+      <div id="credit">ⓘ 본 사이트는 (주)님블뉴런의 '이터널리턴'을 바탕으로 제작된 2차 창작 사이트입니다.</div>
+    </div>
+    <!-- 입장 안내 화면을 끈 사람이 다시 켤 수 있게 로비에도 같은 설정 (2026-11-04) -->
+    <label id="lobby-disclaimer-skip"><input type="checkbox" id="lobby-disclaimer-skip-chk"> 안내문구 보지 않기</label>
+  </div>
+  <!-- 3D 시뮬레이터(Unity WebGL) — 로비(280) 위, 크레딧·설정 모달(300) 아래.
+       iframe으로 격리해 페이지의 전역 변수·CSS·이벤트와 섞이지 않게 한다. 로비로 나갈 때
+       src를 about:blank로 되돌려 wasm 힙·AudioContext·rAF를 통째로 해제한다. -->
+  <div id="unity3d-wrap">
+    <iframe id="unity3d-frame" src="about:blank" title="3D 시뮬레이터"
+      allow="autoplay; fullscreen; pointer-lock"></iframe>
+    <div id="unity3d-load">3D 시뮬레이터 로딩 중…</div>
+    <!-- 로비 복귀 버튼은 여기 없다. 게임 안 Esc 메뉴의 '로비로 돌아가기'가 postMessage 로
+         'shoichi3d-exit'를 보내고, 아래 message 핸들러가 exitUnity3D()를 부른다.
+         셸에 Esc 키 핸들러를 다는 방법은 안 된다 — 포커스가 iframe 안에 있어 keydown이
+         부모까지 오지 않고, 억지로 잡으면 한 번의 Esc가 게임 메뉴와 로비 복귀를 동시에 터뜨린다. -->
+  </div>
+  <!-- 챌린지 결과창 — 2D 챌린지와 함께 진입점이 사라졌지만 UI·랭킹 통신은 그대로 살려둔다.
+       3D 챌린지가 붙으면 JS의 openChalResult(clearMs, {onRetry, onLobby}) 한 줄로 재사용한다. -->
+  <div id="chal-modal">
+    <div class="box">
+      <div class="ttl">🏆 챌린지 클리어!</div>
+      <div class="time" id="chal-result-time">0.00초</div>
+      <div class="subrow">
+        <input type="text" id="chal-nick" maxlength="12" placeholder="닉네임 (최대 12자)">
+        <button class="btn main" id="chal-submit-btn">기록 등록</button>
+      </div>
+      <div class="status" id="chal-status"></div>
+      <div class="lb">
+        <div class="lb-ttl">— 랭킹 TOP 10 —</div>
+        <div id="chal-lb-list"></div>
+      </div>
+      <div class="subrow">
+        <button class="btn main" id="chal-retry-btn">다시 도전</button>
+        <button class="btn" id="chal-lobby-btn">로비로</button>
+      </div>
+    </div>
+  </div>
+  <!-- 첫 방문 안내 (2026-09-16). 텍스트는 정적이고 사용자 입력은 체크박스뿐이라 innerHTML을 쓰지 않는다. -->
+  <div id="intro-modal" role="dialog" aria-modal="true" aria-labelledby="intro-ttl">
+    <div class="box">
+      <div class="ttl" id="intro-ttl">안내</div>
+      <div class="msg">해당 시뮬레이터는 <span class="warn">원작과 조작감이 다르기 때문에</span>,<br>되도록 인게임 연습모드에서 쇼이치를 연습해주시길 바랍니다.</div>
+      <label><input type="checkbox" id="intro-hide-day"> 하루 동안 다시 보지 않기</label>
+      <button class="btn" id="intro-ok-btn">확인</button>
+    </div>
+  </div>
+  <!-- 랭킹 모달 (로비 → '랭킹') — 결과창의 랭킹 UI(#chal-modal .lb*)와 스타일을 공유한다 -->
+  <div id="lb-modal">
+    <div class="box">
+      <!-- 시즌 이름은 DB(site_config.season_name)에서 채운다 — 시즌이 바뀌어도 재배포가 필요 없다 -->
+      <div class="ttl" id="lb-title">더미 처치 챌린지 랭킹</div>
+      <div class="lb">
+        <div class="lb-ttl">TOP 10</div>
+        <div id="lobby-lb-list"></div>
+      </div>
+      <button class="btn" id="lb-close-btn">닫기</button>
+    </div>
+  </div>
+  <!-- 명예의 전당 (로비 → '명예의 전당') — 지난 시즌의 TOP 10을 시즌별로 보존해 보여준다.
+       현재 시즌 랭킹(#lb-modal)과 스타일을 공유하고, 데이터만 hall_of_fame 테이블에서 온다. -->
+  <div id="hof-modal">
+    <div class="box">
+      <div class="ttl">명예의 전당</div>
+      <div class="lb">
+        <div id="hof-list"></div>
+      </div>
+      <button class="btn" id="hof-close-btn">닫기</button>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       스크립트 — js/ 로 분리 (2026-10-15)
+       ============================================================
+       · 고전 스크립트다 (type="module" 아님). 같은 전역 스코프를 공유하므로
+         분리 전 한 <script> 안에 있던 때와 의미가 같다. file:// 로 열어도 로드된다
+         (모듈로 바꾸면 file:// 에서 CORS 로 전부 막혀 로비 자체가 죽는다 —
+          3D 는 어차피 서버가 필요하지만 로비·안내는 지금도 file:// 에서 뜬다).
+       · 순서가 곧 실행 순서다. 파일 번호를 지킬 것. defer 를 붙이지 않는 이유:
+         여기가 </body> 직전이라 DOM 이 이미 완성돼 있고, 붙이면 로비 모달이
+         첫 페인트 뒤에 뜬다 (첫 방문 안내가 한 번 깜빡인다).
+       · 무엇이 무엇을 쓰는지는 각 파일 머리의 '의존/제공' 주석에 적어 뒀다.
+       ============================================================ -->
+  <script src="js/00-config.js"></script>
+  <script src="js/10-ranking.js"></script>
+  <script src="js/20-unity3d.js"></script>
+  <script src="js/30-lobby.js"></script>
+  <script src="js/40-update-log.js"></script>
+  <script src="js/50-settings.js"></script>
+  <script src="js/55-notices.js"></script>
+  <script src="js/60-keys.js"></script>
+</body>
+
+</html>

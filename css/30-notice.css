@@ -1,0 +1,83 @@
+@charset "UTF-8";
+/* ============================================================
+   진입 안내
+   ============================================================
+   3D 진입 시 뜨는 F11·마우스 제스처 안내(#notice-modal).
+
+   원본: ShoichiSimulator_v2.1/index.html 238~310행 (2026-10-15 분리).
+   ⚠ 파일 번호 = 캐스케이드 순서다. index.html 의 <link> 순서를 바꾸면
+     같은 특이도 규칙의 승자가 바뀐다 — 번호를 지키고 중간에 끼울 땐 번호를 비워 쓸 것.
+   ============================================================ */
+
+#notice-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .75);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 300
+}
+
+#notice-modal.show {
+  display: flex
+}
+
+#notice-modal .box {
+  background: #1a1a2a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 24px 28px;
+  max-width: 480px;
+  color: #ddd;
+  font-size: 13px;
+  line-height: 1.7;
+  text-align: center
+}
+
+#notice-modal .ttl {
+  font-size: 16px;
+  font-weight: bold;
+  color: #fc5;
+  margin-bottom: 14px
+}
+
+#notice-modal .line {
+  margin-bottom: 14px;
+  color: #ccc
+}
+
+#notice-modal .line b {
+  color: #5af
+}
+
+#notice-modal .sub {
+  font-size: 11px;
+  color: #888
+}
+
+#notice-modal .hide-chk {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 12px;
+  color: #999;
+  margin-top: 4px;
+  cursor: pointer
+}
+
+#notice-modal .close {
+  margin-top: 14px;
+  padding: 6px 28px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #222;
+  color: #ddd;
+  cursor: pointer;
+  font-size: 13px
+}
+
+#notice-modal .close:hover {
+  background: #333
+}

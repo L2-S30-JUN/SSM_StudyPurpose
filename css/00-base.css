@@ -1,0 +1,36 @@
+@charset "UTF-8";
+/* ============================================================
+   기본
+   ============================================================
+   :root 색 변수 · reset · body. 모든 파일이 이 변수를 쓰므로 반드시 맨 먼저 온다.
+
+   원본: ShoichiSimulator_v2.1/index.html 10~35행 (2026-10-15 분리).
+   ⚠ 파일 번호 = 캐스케이드 순서다. index.html 의 <link> 순서를 바꾸면
+     같은 특이도 규칙의 승자가 바뀐다 — 번호를 지키고 중간에 끼울 땐 번호를 비워 쓸 것.
+   ============================================================ */
+
+:root {
+  color-scheme: dark;
+  forced-color-adjust: none
+}
+
+img {
+  forced-color-adjust: none
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box
+}
+
+body {
+  background: #111;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'Segoe UI', '맑은 고딕', sans-serif;
+  color: #ddd
+}

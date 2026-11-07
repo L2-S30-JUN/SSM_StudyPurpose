@@ -1,0 +1,64 @@
+@charset "UTF-8";
+/* ============================================================
+   3D 시뮬레이터
+   ============================================================
+   #unity3d-wrap / #unity3d-frame / #unity3d-load — iframe 배치와 로딩 문구.
+
+   원본: ShoichiSimulator_v2.1/index.html 702~754행 (2026-10-15 분리).
+   ⚠ 파일 번호 = 캐스케이드 순서다. index.html 의 <link> 순서를 바꾸면
+     같은 특이도 규칙의 승자가 바뀐다 — 번호를 지키고 중간에 끼울 땐 번호를 비워 쓸 것.
+   ============================================================ */
+
+/* ── 3D 시뮬레이터(Unity WebGL) ── */
+#unity3d-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 290;
+  /* 로비(280) 위, 크레딧·설정 모달(300) 아래 */
+  display: none;
+  background: #000
+}
+
+#unity3d-wrap.show {
+  display: block
+}
+
+/* 3D 카메라는 "화면 세로 1px = 월드 1px" 고정이라, 보이는 월드 범위가 뷰포트의 픽셀 높이에
+   그대로 비례한다 (Unity WebGL의 Screen.height = 캔버스의 화면상 CSS 높이).
+   브라우저 창은 exe 전체화면(1080px)보다 낮아서 그만큼 시야가 좁아진다 = 확대돼 보인다.
+   → iframe 자체를 1920×1080으로 고정하고 CSS transform으로 축소해 넣는다. 부모의 transform은
+   iframe 내부 좌표계에 영향을 주지 않으므로, 안쪽 Unity는 언제나 1920×1080으로 인식한다.
+   ★ 절대 width:100%로 바꾸지 말 것 — 원작과 화면 배율을 맞추는 유일한 수단이다. */
+#unity3d-frame {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 1080px;
+  border: 0;
+  transform-origin: 0 0
+}
+
+#unity3d-load {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 32px;
+  text-align: center;
+  line-height: 1.6;
+  color: #b5aeaa;
+  font-size: 14px;
+  letter-spacing: .5px;
+  pointer-events: none;
+  background: #000
+}
+
+#unity3d-wrap.loaded #unity3d-load {
+  display: none
+}
+
+/* 우상단 '로비로' 버튼은 없앴다 — 로비 복귀는 게임 안 Esc 메뉴로 들어간다.
+   (항상 화면에 얹혀 있어 원작에 없는 UI였고 3D 화면 모서리를 가렸다) */

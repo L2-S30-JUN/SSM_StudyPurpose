@@ -1,0 +1,144 @@
+@charset "UTF-8";
+/* ============================================================
+   로비
+   ============================================================
+   #lobby-screen 전체 — 로고·제목·시작 버튼·모드 목록.
+
+   원본: ShoichiSimulator_v2.1/index.html 311~444행 (2026-10-15 분리).
+   ⚠ 파일 번호 = 캐스케이드 순서다. index.html 의 <link> 순서를 바꾸면
+     같은 특이도 규칙의 승자가 바뀐다 — 번호를 지키고 중간에 끼울 땐 번호를 비워 쓸 것.
+   ============================================================ */
+
+#lobby-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  overflow: hidden
+}
+
+/* 로비가 display:none→flex로 다시 열릴 때마다 페이드인이 자동 재생된다 */
+#lobby-screen .inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  opacity: 0;
+  animation: lobby-fade-in 1.1s ease .2s forwards
+}
+
+@keyframes lobby-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px)
+  }
+
+  to {
+    opacity: 1;
+    transform: none
+  }
+}
+
+#lobby-logo {
+  width: 150px;
+  height: 150px;
+  margin-bottom: 2px
+}
+
+#lobby-screen .ttl {
+  font-size: 38px;
+  font-weight: bold;
+  color: #f0ecea;
+  letter-spacing: 6px;
+  text-shadow: 0 0 24px rgba(255, 255, 255, .14)
+}
+
+#lobby-screen .sub {
+  font-size: 13px;
+  color: #8d8683;
+  letter-spacing: 1px;
+  margin-bottom: 10px
+}
+
+#lobby-screen button {
+  padding: 10px 46px;
+  border: 1px solid #6e2a24;
+  border-radius: 4px;
+  background: rgba(10, 8, 8, .55);
+  color: #e8e2df;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, box-shadow .15s
+}
+
+#lobby-screen button:hover {
+  background: rgba(28, 12, 10, .7);
+  border-color: #c1372c;
+  box-shadow: 0 0 14px rgba(193, 55, 44, .25)
+}
+
+#lobby-screen .modes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px
+}
+
+#lobby-screen .modes button {
+  padding: 8px 0;
+  width: 260px;
+  font-size: 13px;
+  border: 1px solid #3c3835;
+  background: rgba(8, 7, 7, .5);
+  color: #b5aeaa
+}
+
+#lobby-screen .modes button:hover {
+  background: rgba(24, 12, 10, .65);
+  border-color: #a03328;
+  color: #e8e2df
+}
+
+/* 챌린지 버튼 + 랭킹 버튼을 한 줄(총 260px)에 배치 */
+#lobby-screen .modes .chal-row {
+  display: flex;
+  gap: 6px;
+  width: 260px
+}
+
+#lobby-screen .modes .chal-row #mode-chal-btn {
+  flex: 1;
+  width: auto
+}
+
+#lobby-screen .modes .chal-row #lobby-rank-btn {
+  flex: none;
+  width: 56px
+}
+
+/* 잠가 둔 모드 — 목록에는 계속 보이되 누를 수 없다 (지금은 더미 처치 챌린지) */
+#lobby-screen .modes button:disabled {
+  opacity: .45;
+  cursor: default
+}
+
+#lobby-screen .modes button:disabled:hover {
+  background: rgba(8, 7, 7, .5);
+  border-color: #3c3835;
+  color: #b5aeaa;
+  box-shadow: none
+}
+
+#lobby-screen .modes .badge {
+  margin-left: 6px;
+  padding: 1px 5px;
+  font-size: 10px;
+  letter-spacing: .5px;
+  color: #c1372c;
+  border: 1px solid #6e2a24;
+  border-radius: 3px;
+  vertical-align: 1px
+}

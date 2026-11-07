@@ -1,0 +1,200 @@
+@charset "UTF-8";
+/* ============================================================
+   랭킹 3종
+   ============================================================
+   #chal-modal(결과창) · #lb-modal(현재 시즌) · #hof-modal(명예의 전당). 셋이 .lb* 스타일을 공유한다.
+
+   원본: ShoichiSimulator_v2.1/index.html 512~701행 (2026-10-15 분리).
+   ⚠ 파일 번호 = 캐스케이드 순서다. index.html 의 <link> 순서를 바꾸면
+     같은 특이도 규칙의 승자가 바뀐다 — 번호를 지키고 중간에 끼울 땐 번호를 비워 쓸 것.
+   ============================================================ */
+
+/* 챌린지 결과창 / 랭킹 모달 — 3D 챌린지가 붙을 때 그대로 재사용한다 */
+#chal-modal,
+#lb-modal,
+#hof-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .75);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 300
+}
+
+#chal-modal.show,
+#lb-modal.show,
+#hof-modal.show {
+  display: flex
+}
+
+#chal-modal .box,
+#lb-modal .box,
+#hof-modal .box {
+  background: #1a1a2a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 22px 26px;
+  width: 340px;
+  color: #ddd;
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+  max-height: 86vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #555 #1a1a2a
+}
+
+#chal-modal .ttl,
+#lb-modal .ttl,
+#hof-modal .ttl {
+  font-size: 16px;
+  font-weight: bold;
+  color: #fc5;
+  margin-bottom: 8px
+}
+
+#chal-modal .time {
+  font-size: 28px;
+  font-weight: bold;
+  color: #e04a3f;
+  letter-spacing: 1px;
+  margin: 4px 0 10px
+}
+
+#chal-modal .subrow {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 6px
+}
+
+#chal-modal input[type=text] {
+  width: 130px;
+  padding: 5px 8px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #111;
+  color: #ddd;
+  font-size: 13px;
+  text-align: center
+}
+
+#chal-modal .btn,
+#lb-modal .btn,
+#hof-modal .btn {
+  padding: 5px 14px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #222;
+  color: #ddd;
+  cursor: pointer;
+  font-size: 13px
+}
+
+#chal-modal .btn:hover,
+#lb-modal .btn:hover,
+#hof-modal .btn:hover {
+  background: #333
+}
+
+#chal-modal .btn:disabled {
+  opacity: .45;
+  cursor: default
+}
+
+#chal-modal .btn.main {
+  border-color: #c1372c;
+  color: #e04a3f
+}
+
+#chal-modal .status {
+  font-size: 11px;
+  color: #888;
+  min-height: 16px;
+  margin-bottom: 8px
+}
+
+#chal-modal .lb,
+#lb-modal .lb,
+#hof-modal .lb {
+  margin: 6px 0 10px;
+  text-align: left
+}
+
+#chal-modal .lb-ttl,
+#lb-modal .lb-ttl,
+#hof-modal .lb-ttl {
+  font-size: 12px;
+  color: #8d8683;
+  letter-spacing: 1px;
+  text-align: center;
+  margin-bottom: 4px
+}
+
+#chal-modal .lb-row,
+#lb-modal .lb-row,
+#hof-modal .lb-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2px 8px;
+  font-size: 12px;
+  border-radius: 3px
+}
+
+#chal-modal .lb-row:nth-child(odd),
+#lb-modal .lb-row:nth-child(odd),
+#hof-modal .lb-row:nth-child(odd) {
+  background: rgba(255, 255, 255, .04)
+}
+
+#chal-modal .lb-row .rk,
+#lb-modal .lb-row .rk,
+#hof-modal .lb-row .rk {
+  color: #8d8683;
+  width: 26px;
+  flex: none
+}
+
+#chal-modal .lb-row .nk,
+#lb-modal .lb-row .nk,
+#hof-modal .lb-row .nk {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap
+}
+
+#chal-modal .lb-row .tm,
+#lb-modal .lb-row .tm,
+#hof-modal .lb-row .tm {
+  color: #e8e2df;
+  font-weight: bold
+}
+
+#chal-modal .lb-row.top1 .rk,
+#chal-modal .lb-row.top1 .tm,
+#lb-modal .lb-row.top1 .rk,
+#hof-modal .lb-row.top1 .rk,
+#lb-modal .lb-row.top1 .tm,
+#hof-modal .lb-row.top1 .tm {
+  color: #fc5
+}
+
+/* 명예의 전당의 시즌 구분 머리글 — 시즌이 여러 개 쌓이면 사이를 갈라 준다 */
+#hof-modal .season-hd {
+  font-size: 12px;
+  color: #fc5;
+  letter-spacing: 1px;
+  text-align: center;
+  margin: 12px 0 4px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid #333
+}
+
+#hof-modal .season-hd:first-child {
+  margin-top: 0
+}

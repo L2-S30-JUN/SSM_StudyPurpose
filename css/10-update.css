@@ -1,0 +1,134 @@
+@charset "UTF-8";
+/* ============================================================
+   업데이트 내역
+   ============================================================
+   로비 하단 링크(#lobby-update-link) + 모달(#update-modal).
+
+   원본: ShoichiSimulator_v2.1/index.html 36~159행 (2026-10-15 분리).
+   ⚠ 파일 번호 = 캐스케이드 순서다. index.html 의 <link> 순서를 바꾸면
+     같은 특이도 규칙의 승자가 바뀐다 — 번호를 지키고 중간에 끼울 땐 번호를 비워 쓸 것.
+   ============================================================ */
+
+#lobby-update-link {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #5af;
+  text-decoration: none;
+  cursor: pointer
+}
+
+#lobby-update-link:hover {
+  text-decoration: underline;
+  color: #8cf
+}
+
+/* 업데이트 내역 모달 — 크레딧 모달과 같은 톤·z-index(로비 280 위) */
+#update-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .75);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 300
+}
+
+#update-modal.show {
+  display: flex
+}
+
+#update-modal .box {
+  background: #1a1a2a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 20px 22px;
+  width: 520px;
+  max-width: 90vw;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  color: #ddd;
+  font-size: 13px;
+  line-height: 1.6
+}
+
+#update-modal .ttl {
+  font-size: 15px;
+  font-weight: bold;
+  color: #5af;
+  text-align: center;
+  margin-bottom: 12px
+}
+
+#update-modal .list {
+  overflow: auto;
+  text-align: left;
+  padding-right: 6px
+}
+
+#update-modal .ver-hd {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 14px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #333
+}
+
+#update-modal .ver-hd:first-child {
+  margin-top: 0
+}
+
+#update-modal .ver {
+  font-size: 14px;
+  font-weight: bold;
+  color: #f0c14b
+}
+
+#update-modal .date {
+  font-size: 11px;
+  color: #888
+}
+
+#update-modal .vid {
+  margin-left: auto;
+  font-size: 11px;
+  color: #5af;
+  text-decoration: none
+}
+
+#update-modal .vid:hover {
+  text-decoration: underline
+}
+
+#update-modal ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  color: #ccc
+}
+
+#update-modal ul ul {
+  margin: 2px 0 4px;
+  color: #999;
+  font-size: 12px
+}
+
+#update-modal li {
+  margin: 2px 0
+}
+
+#update-modal .close {
+  align-self: center;
+  margin-top: 16px;
+  padding: 6px 18px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #222;
+  color: #ddd;
+  cursor: pointer;
+  font-size: 12px
+}
+
+#update-modal .close:hover {
+  background: #333
+}
